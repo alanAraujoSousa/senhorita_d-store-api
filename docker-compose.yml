@@ -1,0 +1,18 @@
+version: '3'
+
+services:
+
+  store-db:
+    image: mysql:8.0.17
+    environment:
+      MYSQL_ROOT_PASSWORD: devdatabase
+      MYSQL_DATABASE: senhorita_d-store
+    ports:
+      - "3308:3306"
+
+  store-db-admin:
+    image: adminer
+    ports: 
+      - "8080:8080"
+
+ 
