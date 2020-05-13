@@ -33,6 +33,9 @@ router.get('/', (req, res) => {
 
 /* GET SINGLE ORDER */
 router.get('/:id', (req, res) => {
+
+  let orderId = req.params.id;
+
   database.table('orders_details as od')
     .join([
       {
@@ -58,6 +61,68 @@ router.get('/:id', (req, res) => {
         res.json({message: `No orders found with orderId ${orderId}`});
       }
     }).catch(err => console.log(err));
+});
+
+/* CREATE A ORDER */
+router.post('/', (req, res) => {
+
+  let { userId, products } = req.body;
+
+  if (userId !== null && userId > 0 && !isNaN(userId)) {
+    database.table('orders')
+      .insert({
+        userId: userId
+      }).then(newOrderId => {
+        if (newOrderId > 0) {
+          products.forEach(async (p) => {
+            let data = await database.table('products').filter({id: p.id}).withFields(['quantity']).get();
+            let inCart = p.inCart;
+
+            if (data.quantity > 0) {
+              data.quantity = data.quantity - inCart;
+              
+              if (dataQuantity < 0) {
+                data.quantity = 0
+              } 
+                
+            } else {
+              data.quantity = 0;
+              return;
+            }
+
+            database.table('orders_details')
+              .insert({
+                order_id: newOrderId,
+                product_id: p.id,
+                quantity: inCart
+              }).then(newId => {
+                database.table('products')
+                  .filter({id: p.id})
+                  .update({
+                    quantity: data.quantity
+                  }).then(successNum => {}).catch(err => console.log(err));
+              }).catch(err => console.log(err));
+          });
+        } else {
+          res.json({message: 'New order failed while adding order details', success: false})
+        }
+        res.json({
+          message: `Order successfully placed with order id ${newOrderId}`,
+          success: true,
+          order_id: newOrderId,
+          products: products
+        });
+      }).catch(err => console.log(err));
+  } else {
+    res.json({message: 'New order failed', success: false});    
+  }
+});
+
+/* FAKE PAYMENT GATEWAY CALL*/
+router.post('/payment', (req, res) => {
+  setTimeout(() => {
+    res.status(200).json({success: true});
+  }, 3000);
 });
 
 module.exports = router;
