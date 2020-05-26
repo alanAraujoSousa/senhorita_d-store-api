@@ -10,7 +10,7 @@ const swaggerUI = require('swagger-ui-express');
 const swaggerOptions = {
     swaggerDefinition: {
         info: {
-            title: "Shop API",
+            title: "Senhorita D Store API",
             description: "The backend Api",
             contact: {
                 name: 'alan.araujosb@gmail.com'
@@ -41,5 +41,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 // Def routes
 app.use('/api/products', require('./routes/products'));
 app.use('/api/orders', require('./routes/orders'));
+app.use('/api/users', require('/routes/users																																																																'));
+app.use('/api/auth', require('/routes/auth'));
 
 module.exports = app;
