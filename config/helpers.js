@@ -6,7 +6,7 @@ let conn = new Mysqli({
     host: 'localhost', // IP/domain name 
     port: 3306, // port, default 3306 
     user: 'root', // username 
-    pass: 'root', // password 
+    passwd: 'root', // password 
     db: 'senhorita_d_store'
 });
 
